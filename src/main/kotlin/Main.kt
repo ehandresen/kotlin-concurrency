@@ -1,8 +1,6 @@
 package org.example
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
 
 //Coroutines
@@ -12,12 +10,16 @@ fun main() {
     val time = measureTimeMillis {
         runBlocking {
             println("Fetching news...")
-            launch {
-                printNews()
+
+            val news: Deferred<String> = async {
+                getNews()
             }
-            launch {
-                printArticle()
+
+            val article: Deferred<String> = async {
+                getArticle()
             }
+
+            println("${news.await()} ${article.await()}")
 
             println("Connection closed")
         }
@@ -25,12 +27,12 @@ fun main() {
     println("Execution time: ${time / 1000} seconds")
 }
 
-suspend fun printNews() {
-    delay(1000)
-    println("NEWS")
+suspend fun getNews(): String {
+    delay(2000)
+    return "NEWS"
 }
 
-suspend fun printArticle() {
+suspend fun getArticle(): String {
     delay(1000)
-    println("Article 1")
+    return "Article 1"
 }
