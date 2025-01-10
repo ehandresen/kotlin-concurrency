@@ -11,20 +11,22 @@ fun main() {
         runBlocking {
             println("Fetching news...")
 
-            val news: Deferred<String> = async {
-                getNews()
-            }
-
-            val article: Deferred<String> = async {
-                getArticle()
-            }
-
-            println("${news.await()} ${article.await()}")
+            val newsReport = getNewsReport()
+            println(newsReport)
 
             println("Connection closed")
         }
     }
     println("Execution time: ${time / 1000} seconds")
+}
+
+// coroutineScope ensures the execution of all child coroutines it launches.
+// It suspends until all child coroutines complete and returns the result of the last line of the block.
+suspend fun getNewsReport() = coroutineScope {
+    val news = async { getNews() }
+    val article = async { getArticle() }
+
+    "${news.await()} ${article.await()}"
 }
 
 suspend fun getNews(): String {
